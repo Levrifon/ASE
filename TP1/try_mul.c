@@ -13,7 +13,7 @@ static int mul(int depth) {
 			if(i)
 				return i * mul(depth+1);
 			else
-				return 0;
+				return 0; /* ici utiliser le jump */
 	}
 
 }
@@ -25,5 +25,5 @@ int main() {
 	pctx->ctx_esp=0;
 	pctx->ctx_ebp=0;
 	printf("A list of int, please ! \n");
-	printf("Resultat : %d \n" , try(pctx,mul,0)); /* avec 123 devrait retourner 6 */
+	printf("Resultat : %d \n" , try(pctx,mul,0)); /* avec 1\n2\n3 devrait retourner 6 */
 }
