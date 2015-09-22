@@ -1,9 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include "try.h"
 
-int try(struct ctx_s *pctx, func_t *f, int arg) {
+int try(struct ctx_s *pctx, func_t *f, int arg) {
     
     asm("movl %%esp, %0" "\n\t" "movl %%ebp, %1"
             :"=r"(pctx->ctx_esp), "=r"(pctx->ctx_ebp)
@@ -11,10 +9,10 @@ int try(struct ctx_s *pctx, func_t *f, int arg) {
             :);
 
 
-    return 0;
+    return f(arg);
 }
 
-int throw(struct ctx_s *pctx, int r) {
+int throw(struct ctx_s *pctx, int r) {
        
     asm("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
             :
