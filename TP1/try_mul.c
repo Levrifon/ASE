@@ -19,11 +19,7 @@ static int mul(int depth) {
 int main() {
 	int product;
 	static jump_buf buf;
+	struct ctx_s *pctx;
 	printf("A list of int, please ! \n");
-	if(setjmp(buf)) {
-		product = 0;
-	} else {
-		product = mul(0);
-	}
-
+	/* try(mul(0)) */
 }
