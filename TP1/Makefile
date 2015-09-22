@@ -1,0 +1,17 @@
+CC=gcc
+CFLAGS=-I.
+CFLAGS+= -m32
+OBJ = display_stack.o try.o try_mul.o
+%.o: %.c
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+%: %.o
+	$(CC) -o $@ $< $(CFLAGS)
+
+all: $(OBJ)
+	$(CC) -o $@ $^ -I. -m32
+
+.PHONY: clean
+
+clean:
+	rm -f *.o *~ core 
