@@ -1,12 +1,14 @@
 #include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include "try.h"
 static int mul(int depth) {
 	int i;
 	switch(scanf("%d", &i)) {
 		case EOF :
 			return 1; /*neutral element */
 		case 0 :
-			return mul(depth+1);
+			return mul(depth+1); /*get deeper because of error */
 		case 1 :
 			if(i)
 				return i * mul(depth+1);
@@ -18,8 +20,10 @@ static int mul(int depth) {
 
 int main() {
 	int product;
-	static jump_buf buf;
-	struct ctx_s *pctx;
+	jmp_buf buf;
+	struct ctx_s *pctx = malloc(2*sizeof(int));
+	pctx->ctx_esp=0;
+	pctx->ctx_ebp=0;
 	printf("A list of int, please ! \n");
-	/* try(mul(0)) */
+	printf("Resultat : %d \n" , try(pctx,mul,0)); /* avec 123 devrait retourner 6 */
 }
