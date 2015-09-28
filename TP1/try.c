@@ -5,7 +5,11 @@ static int res;
 
 int try(struct ctx_s *pctx, func_t *f, int arg) {
     
-    asm("movl %%esp, %0" "\n\t" "movl %%ebp, %1"
+    asm("addl $8, %%esp"
+	"\n\t"
+	"movl %%esp, %0"
+	"\n\t"
+	"movl %%ebp, %1"
             :"=r"(pctx->ctx_esp), "=r"(pctx->ctx_ebp)
             :
             :);

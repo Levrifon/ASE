@@ -7,7 +7,7 @@ void display_stack(void){
 
                : "=r"(esp), "=r"(ebp)  /* outputs */
                
-               : /* empty imputs */
+               : /* empty inputs */
 
                : );
 
