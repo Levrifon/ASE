@@ -29,7 +29,7 @@ int main() {
 	printf("A list of int, please ! \n");
 	product = try(pctx,&mul,0);
 	printf("Resultat : %d \n" , product); /* avec 1\n2\n3 devrait retourner 6 */
-
+	display_stack();
 	free(pctx);
 
 	return 0;
