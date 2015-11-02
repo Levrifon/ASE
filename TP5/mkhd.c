@@ -13,26 +13,17 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "hardware.h"
-static void empty_it(){
-    return;
-}
+#include "drive.h"
 
 int main(int argc, char **argv){
-	unsigned int i;
-	assert(argc > 1);
+	/*unsigned int i;
+	assert(argc > 1);*/
 	/* init hardware */
-	if(init_hardware("hardware.ini") == 0) {
-		fprintf(stderr, "Error in hardware initialization\n");
-		exit(EXIT_FAILURE);
-	}
+	init_drive();
+	
+	
 
-	/* Interreupt handlers */
-	for(i=0; i<16; i++)
-	IRQVECTOR[i] = empty_it;
-
-	/* Allows all IT */
-	_mask(1);
+	
 
 	/* and exit! */
 	exit(EXIT_SUCCESS);

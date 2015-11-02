@@ -1,4 +1,7 @@
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "drive.h"
 
 void dmps(unsigned int cylinder, unsigned int sector){
@@ -9,9 +12,27 @@ void dmps(unsigned int cylinder, unsigned int sector){
 	
 	//_______________________
 	read_sector(cylinder, sector, buffer);
+	
+        dump(buffer,HDA_SECTORSIZE,0/*ascii*/,1/*octal*/);
 }
 
-// DSHINFO #c #s taille secteur
+int main(int argc, char **argv){
+
+	if (argc < 3) {
+	        printf("dmps: missing arguments\n./dmps [cylinder] [sector]\n");
+	        exit(42);
+	}
+	unsigned int cylinder = atoi(argv[1]);
+	unsigned int sector = atoi(argv[2]);
+
+	init_drive();  
+	dmps(cylinder,sector); 
+
+	return 0;
+  
+}
+
+// DSKINFO #c #s taille secteur
 // void chk_hardware(void){
 // 	lire taille secteur via DSKINFO
 //	compare à SECTORSIZE

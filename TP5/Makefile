@@ -4,8 +4,8 @@
 ROOTDIR=/home/enseign/ASE
 
 CC	= gcc
-CFLAGS	= -Wall -ansi -pedantic 
-CFLAGS  += -g -m32
+#CFLAGS	= -Wall -ansi -pedantic 
+CFLAGS  = -g -m32
 LIBDIR  = $(ROOTDIR)/lib
 INCDIR  = -I$(ROOTDIR)/include
 LIBS    = -L$(LIBDIR) -lhardware
@@ -13,9 +13,15 @@ LIBS    = -L$(LIBDIR) -lhardware
 ###------------------------------
 ### Main targets 
 ###------------------------------------------------------------
-BINARIES= mkhd 
-OBJECTS	= $(addsuffix .o,\
-	  mkhd)
+BINARIES= mkhd dmps frmt
+OBJECTS	 = $(addsuffix .o,\
+	   mkhd)
+OBJECTS	+= $(addsuffix .o,\
+	   dmps)
+OBJECTS	+= $(addsuffix .o,\
+	   frmt)
+OBJECTS	+= $(addsuffix .o,\
+	   driver)
 
 all: $(BINARIES) $(OBJECTS)
 
@@ -24,10 +30,28 @@ all: $(BINARIES) $(OBJECTS)
 ### Main rules 
 ###------------------------------------------------------------
 mkhd.o: mkhd.c
-	$(CC) $(CFLAGS) -c mkhd.c $(INCDIR)
+	$(CC) $(CFLAGS) -c $^ $(INCDIR)
 
-mkhd: mkhd.o
-	$(CC) $(CFLAGS) -o mkhd mkhd.o $(LIBS)
+mkhd: mkhd.o drive.o 
+	$(CC) $(CFLAGS) -o mkhd $^ $(LIBS)
+	
+dmps.o: dmps.c
+	$(CC) $(CFLAGS) -c $^ $(INCDIR)
+
+dmps: dmps.o drive.o dump.o
+	$(CC) $(CFLAGS) -o dmps $^ $(LIBS)
+	
+frmt.o: frmt.c
+	$(CC) $(CFLAGS) -c $^ $(INCDIR)
+
+frmt: frmt.o drive.o dump.o
+	$(CC) $(CFLAGS) -o frmt $^ $(LIBS)
+	
+drive.o:drive.c
+	$(CC) $(CFLAGS) -c $^ $(INCDIR)
+	
+dump.o:dump.c
+	$(CC) $(CFLAGS) -c $^ $(INCDIR)
 
 ###------------------------------
 ### Misc.

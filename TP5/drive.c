@@ -1,7 +1,9 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "drive.h"
+
 
 int check_values(unsigned int cylinder, unsigned int sector){
         assert(cylinder < HDA_MAXCYLINDER);
@@ -18,6 +20,7 @@ void init_drive(){
         for(i=0;i<16;i++){
                 IRQVECTOR[i]=empty_fct;
         }
+        _mask(1);
 }
 
 void seek(unsigned int cylinder, unsigned int sector){
@@ -34,7 +37,7 @@ void seek(unsigned int cylinder, unsigned int sector){
 	_sleep(HDA_IRQ);
 }
 void read_sector(unsigned int cylinder, unsigned int sector, unsigned char *buffer){
-        seek(cylinder, sector)
+        seek(cylinder, sector);
 	//lire le secteur courant
 	//ecrire 1 dans le port de données [ 0 | 1 ]
 	_out(HDA_DATAREGS  , 0);
