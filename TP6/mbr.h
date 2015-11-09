@@ -1,8 +1,7 @@
 #ifndef _MBR_H_
 #define _MBR_H_
 
-#include "drive.h"
-
+static struct mbr_s mbr;
 enum vol_type_e {VOL_STD,VOL_ANX,VOL_OTHER,VOL_UNUSED};
 #define MBR_MAGIC 0xDEADC0DE
 #define MAX_VOL 8
@@ -16,10 +15,12 @@ struct vol_descr_s {
 
 struct mbr_s {
 	struct vol_descr_s mbr_vol[MAX_VOL];
-	unsigned mbr_magic;
+	unsigned int mbr_n_vol
+	unsigned int mbr_magic;
 };
 
-extern int read_mbr();
+int read_mbr();
+void write_mbr();
 
 
 #endif

@@ -1,7 +1,8 @@
 #include <string.h>
 #include "mbr.h"
+#include "drive.h"
 
-static struct mbr_s mbr;
+extern struct mbr_s mbr;
 
 /* renvoie si le disque est déjà partitionné ou non */
 int read_mbr(void) {
@@ -11,7 +12,14 @@ int read_mbr(void) {
 	memcpy(&mbr,buffer,sizeof(mbr)); /*on copie le resultat dans le mbr */
 	if(mbr.mbr_magic != MBR_MAGIC) {
 		mbr.mbr_magic = MBR_MAGIC;
-		/*mbr.mbr_n_vol = 0;*/
+		mbr.mbr_n_vol = 0;
+		int i;
+                for(i=0;i<MAX_VOL;i++) {
+                        mbr.vol[i].cylinder=0;
+                        mbr.vol[i].sector=0;
+                        mbr.vol[i].size=1;
+                        mbr.vol[i].type=VOL_UNUSED;
+                }
 		return 0;
 	}
 	return 1;
@@ -21,12 +29,4 @@ void write_mbr(void) {
 	write_sector_n(0,0,&mbr,sizeof(mbr));
 }
 
-unsigned int cylinder_of_bloc(int vol, int bloc) {
-	chk_disk();
-	return (mbr.mbr_vol[vol].vol_first_cylinder + mbr.mbr_vol[vol].vol_first_sector + bloc) % HDA_MAXSECTOR;
-}
-unsigned int sector_of_bloc(int vol, int bloc) {
-	chk_disk();
-	return((mbr.mbr_vol[vol].vol_first_sector + bloc) % HDA_MAXSECTOR);
-}
 
