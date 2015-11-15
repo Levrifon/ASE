@@ -7,7 +7,8 @@
 
 extern struct mbr_s mbr;
 
-void dump_vol(unsigned int volume,unsigned int nbloc) {
+/* Ancienne fonction qui dumpe juste le volume voulu, ne fait pas ce qu'on voudrait => comme df */
+void dump_vol(unsigned int volume,unsigned int nbloc){
 	int i,j;
 
 	unsigned char *buffer=(char *) malloc(HDA_SECTORSIZE); 
@@ -18,15 +19,16 @@ void dump_vol(unsigned int volume,unsigned int nbloc) {
 }
 
 int main(int argc, char **argv){
-        if (argc < 3) {
-                printf("print_vol: missing argument\n./print_bloc [volume]\n");
+       	/* // Utilisé pour l'ancienne fonction
+	if (argc < 3) {
+                printf("dvol: missing argument\n./print_bloc [volume]\n");
                 exit(42);
         }
         unsigned int volume = atoi(argv[1]);
 	unsigned int nbloc = atoi(argv[2]);
-	
+	*/
         init_drive();
         read_mbr();
-        dump_vol(volume,nbloc);
+        dump_vols();
         return 0;
 }

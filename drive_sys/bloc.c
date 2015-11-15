@@ -1,8 +1,7 @@
 #include "bloc.h"
-#include "mbr.h"
 #include <string.h>
 #include <stdlib.h>
-//static unsigned int current_vol;
+static unsigned int current_vol;// Ou bien $CURRENT_VOLUME variable d'env du shell
 
 void init_super(unsigned int vol, char name, unsigned int serial){
 	super;// 		= (struct super_s*) malloc(sizeof(struct super_s));
@@ -11,10 +10,11 @@ void init_super(unsigned int vol, char name, unsigned int serial){
 	assert(first_bloc);
 
 	super.super_first_free = 1;
-	super.super_n_free = mbr.mbr_vol[vol].vol_nblocs-1; // Ou bien $CURRENT_VOLUME variable d'env du shell
+	super.super_n_free = mbr.mbr_vol[vol].vol_nblocs-1;
 	strncpy(super.super_name, &name, SUPER_NAME_MAX);
 	super.super_serial = serial;
 	super.super_magic  = SUPER_MAGIC;
+	current_volume = vol; // A changer si on utiliser une variable d'env
 
 	first_bloc.fb_size = super.super_n_free;
 	first_bloc.fb_next = SUPER;
@@ -27,19 +27,27 @@ void save_super(void){
 	assert(super.super_magic == SUPER_MAGIC);
 	write_bloc_n(SUPER, &super, sizeof(struct super_s));
 }
+
 int load_super(unsigned int vol){
 	char buffer[BLOCSIZE];
 	read_bloc_n(SUPER, &buffer, sizeof(struct super_s));
-	memcpy(&super, &buffer,sizeof(struct super_s));	
-	return 0;
+	memcpy(&super, &buffer,sizeof(struct super_s));
+	current_volume = vol; // A changer si on utiliser une variable d'env
+	if(super.super_magic == SUPER_MAGIC){
+		return 0;
+	}
+	return 1;
 }
 
 int load_first_free(void){
+	if(super.super_n_free == 0){
+		return 0
+	}
 	read_bloc_n(super.super_first_free, &first_bloc, sizeof(first_bloc));
-	return 0;
+	return 1;
 }
 
-unsigned int new_bloc(){
+unsigned int new_bloc(void){
 	if(super.super_n_free == 0){
 		return 0;
 	}
@@ -54,7 +62,7 @@ unsigned int new_bloc(){
 		first_bloc.fb_size--;
 		write_bloc_n(super.super_first_free, &first_bloc, sizeof(first_bloc));
 	}
-	// Peut être save_super();
+	save_super();
 	return res;
 	// donner bloc en tête du premier bloc libre, modifier le bloc d'après et l'écrire
 	// Si le bloc en tête est seul il faut changer le superbloc pour changer le first_free_bloc
@@ -68,5 +76,20 @@ void free_bloc(unsigned int bloc){
 	super.super_first_free = bloc;
 	write_bloc_n(bloc, &bloc_s, sizeof(bloc_s));
 	first_bloc = bloc_s;
+	save_super();
 }
 
+float used_percents(unsigned int vol){
+	return (1.00 - (float)super.super_n_free/(float)(mbr.mbr_vol[vol].vol_nblocs-1))*100.00;
+}
+
+void display_infos(void){
+	printf("Nombre de blocs : %d\nNom\tSerial\tTaille\tUtilisé\tDispo.\tPourcentage\n%s\t%d\t%d\t%d\t%d\t%f\n",
+			mbr.mbr_vol[current_volume].vol_nblocs-1-super.super_n_free,
+			super.super_name,
+			super.super_serial,
+			mbr.mbr_vol[current_volume].vol_nblocs-1,
+			mbr.mbr_vol[current_volume].vol_nblocs-1-super.super_n_free,
+			super.super_n_free,
+			used_percents(current_volume));
+}

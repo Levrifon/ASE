@@ -30,3 +30,23 @@ void write_mbr(void) {
 }
 
 
+char* display_type(enum type_vol_e type){
+	switch(type){
+		case VOL_STD: return "Principale";
+		case VOL_ANX: return "Etendue";
+		default: return "Autre";
+	}
+}
+
+void dump_vols(void){
+	int i;
+	printf("Volume\tCylindre\tSecteur\tNb secteurs\tType\n-------------------------------------------------\n");
+	for (i=0; i<mbr.mbr_n_vol; i++){
+		printf("sda%d\t%d\t%d\t%d\t%s\n", 
+			i,
+			mbr.mbr_vol[i].vol_first_cylinder,
+			mbr.mbr_vol[i].vol_first_sector,
+			mbr.mbr_vol[i].vol_nbloc,
+			display_type(mbr.mbr_vol[i].vol_type));
+	}
+}

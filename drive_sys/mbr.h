@@ -21,6 +21,6 @@ struct mbr_s {
 
 int read_mbr();
 void write_mbr();
-
+void dump_vols(void);
 
 #endif

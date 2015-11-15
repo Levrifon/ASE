@@ -42,7 +42,7 @@ int create_vol(unsigned int nbloc){
 int main(int argc, char **argv){
 
         if (argc < 2) {
-                printf("create_vol: missing argument\n./create_bloc [nbloc]\n");
+                printf("mkvol: missing argument\n./create_bloc [nbloc]\n");
                 exit(42);
         }
 

@@ -2,6 +2,7 @@
 #define SUPER 0
 #define SUPER_NAME_MAX 32
 #define BLOCSIZE 255
+#include "mbr.h"
 struct super_s{
 	unsigned int 	super_first_free;
 	unsigned int 	super_n_free;
@@ -24,5 +25,7 @@ void init_super(unsigned int vol, char name, unsigned int serial);
 void save_super(void);
 int load_super(unsigned int vol);
 int load_first_free(void);
-unsigned int new_bloc();
+unsigned int new_bloc(void);
 void free_bloc(unsigned int bloc);
+float used_percents(unsigned int vol);
+void display_infos(void);
