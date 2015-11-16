@@ -3,6 +3,7 @@
 #define SUPER_NAME_MAX 32
 #define BLOCSIZE 255
 #include "mbr.h"
+#include "volume.h"
 struct super_s{
 	unsigned int 	super_first_free;
 	unsigned int 	super_n_free;

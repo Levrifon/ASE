@@ -6,11 +6,11 @@
 #include <assert.h>
 
 
-extern struct mbr_s mbr;
+//extern struct mbr_s mbr;
 
 int create_vol(unsigned int nbloc){
-
-        assert(mbr.mbr_magic == MBR_MAGIC);
+        read_mbr();
+        printf("debut mkvol %d, %d\n",mbr.mbr_magic, MBR_MAGIC);
         if(mbr.mbr_n_vol==MAX_VOL) {
                 printf("Il y en a déjà %d/%d.",MAX_VOL,MAX_VOL);
                 return 42;
@@ -42,7 +42,7 @@ int create_vol(unsigned int nbloc){
 int main(int argc, char **argv){
 
         if (argc < 2) {
-                printf("mkvol: missing argument\n./create_bloc [nbloc]\n");
+                printf("mkvol: missing argument\n./mkvol [nbloc]\n");
                 exit(42);
         }
 

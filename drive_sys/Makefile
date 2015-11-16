@@ -35,13 +35,16 @@ frmt: frmt.o drive.o dump.o
 	$(CC) $(CFLAGS) -o frmt $^ $(LIBS)
 	
 mkvol: mkvol.o drive.o dump.o volume.o mbr.o
-	$(CC) $(CFLAGS) -o frmt $^ $(LIBS)
+	$(CC) $(CFLAGS) -o mkvol $^ $(LIBS)
 	
 dfs: dfs.o bloc.o drive.o dump.o volume.o mbr.o
-	$(CC) $(CFLAGS) -o frmt $^ $(LIBS)
+	$(CC) $(CFLAGS) -o dfs $^ $(LIBS)
+	
+mknfs: mknfs.o bloc.o drive.o dump.o volume.o mbr.o
+	$(CC) $(CFLAGS) -o mknfs $^ $(LIBS)
 
 dvol: dvol.o drive.o dump.o volume.o mbr.o
-	$(CC) $(CFLAGS) -o frmt $^ $(LIBS)
+	$(CC) $(CFLAGS) -o dvol $^ $(LIBS)
 	
 dvol.o: dvol.c
 mkhd.o: mkhd.c
@@ -49,6 +52,7 @@ dmps.o: dmps.c
 frmt.o: frmt.c
 mkvol.o: mkvol.c
 dfs.o: dfs.c
+mknfs.o: dfs.c
 drive.o:drive.c
 dump.o:dump.c
 mbr.o:mbr.c

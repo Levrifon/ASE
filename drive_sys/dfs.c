@@ -4,8 +4,7 @@
 #include "bloc.h"
 
 int main() {
-	read_mbr();
-	load_super(0)
-	display();
+	printf("Super loaded ? %d", load_super(0));
+	display_infos();
 	return 0;
 }
