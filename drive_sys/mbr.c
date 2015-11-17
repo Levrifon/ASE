@@ -3,7 +3,7 @@
 #include "mbr.h"
 #include "drive.h"
 
-extern struct mbr_s mbr;
+struct mbr_s mbr;
 
 /* renvoie si le disque est déjà partitionné ou non */
 int read_mbr(void) {
@@ -45,9 +45,9 @@ char* display_type(enum vol_type_e type){
 void dump_vols(void){
         read_mbr();
 	int i;
-	printf("Volume\tCylindre\tSecteur\tNb secteurs\tType\n-------------------------------------------------\n");
+	printf("Volume\tCylindre\tSecteur\tNb blocs\tType\n-----------------------------------------------------------\n");
 	for (i=0; i<mbr.mbr_n_vol; i++){
-		printf("sda%d\t%d\t%d\t%d\t%s\n", 
+		printf("sda%d\t%d\t\t%d\t%d\t\t%s\n", 
 			i,
 			mbr.mbr_vol[i].vol_first_cylinder,
 			mbr.mbr_vol[i].vol_first_sector,

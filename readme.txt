@@ -14,4 +14,4 @@ mkvol [nb blocs]
 dfs
 mknfs
 
-Jusqu'à maintenant mkvol, mknfs ne marchent pas à cause de read_mbr() qui semble bugger.
+Jusqu'à maintenant dfs et mknfs ne marchent pas encore comme il faut.

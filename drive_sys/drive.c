@@ -90,7 +90,9 @@ void format_sector(unsigned int cylinder, unsigned int sector, unsigned int valu
 }
 
 void chk_disk(){
+        //printf("chk_disk\n");
         _out(HDA_CMDREG, CMD_DSKINFO);
+        //_sleep(HDA_IRQ);
         int nb_cylinders, nb_sectors, sector_size;
         nb_cylinders    = _in(HDA_PARAMREG) << 8;
         nb_cylinders   |= _in(HDA_PARAMREG + 1);
@@ -98,6 +100,8 @@ void chk_disk(){
         nb_sectors     |= _in(HDA_PARAMREG + 3);
         sector_size     = _in(HDA_PARAMREG + 4) << 8;
         sector_size    |= _in(HDA_PARAMREG + 5);
+        //
+        //printf("cyl : %d sec : %d sec_size : %d\n", nb_cylinders, nb_sectors, sector_size);
         assert(nb_cylinders == HDA_MAXCYLINDER);
         assert(nb_sectors   == HDA_MAXSECTOR  );
         assert(sector_size  == HDA_SECTORSIZE );

@@ -2,17 +2,25 @@
 #include "drive.h"
 #include "volume.h"
 #include <assert.h>
+#include <stdio.h>
+
+extern struct mbr_s mbr;
 
 unsigned int cylinder_of_bloc(int vol, int bloc) {
+        printf("cyl of bloc\n");
 	chk_disk();
 	return (mbr.mbr_vol[vol].vol_first_cylinder + mbr.mbr_vol[vol].vol_first_sector + bloc) % HDA_MAXSECTOR;
 }
 unsigned int sector_of_bloc(int vol, int bloc) {
+        printf("sec of bloc\n");
 	chk_disk();
 	return((mbr.mbr_vol[vol].vol_first_sector + bloc) % HDA_MAXSECTOR);
 }
 
 unsigned int next_free_cylinder_of_bloc(){
+        printf("next free cyl of bloc\n");
+        //read_mbr();
+        printf("next_free, mbr_magic = %d\n", mbr.mbr_magic);
         unsigned int res;
         int vol = mbr.mbr_n_vol?mbr.mbr_n_vol-1:mbr.mbr_n_vol;
         assert(mbr.mbr_magic==MBR_MAGIC);
@@ -25,6 +33,7 @@ unsigned int next_free_cylinder_of_bloc(){
 }
 
 unsigned int next_free_sector_of_bloc(){
+        printf("next free sec of bloc\n");
         unsigned int res;
         int vol = mbr.mbr_n_vol?mbr.mbr_n_vol-1:mbr.mbr_n_vol;
         assert(mbr.mbr_magic==MBR_MAGIC);

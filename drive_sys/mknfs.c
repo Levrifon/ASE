@@ -9,7 +9,7 @@ int main(){
 	int nbblocs;
 	int i;
 	unsigned int test_serial = 0xDEADBEEF;
-
+        init_drive();
 	read_mbr();
 	dump_vols();
 

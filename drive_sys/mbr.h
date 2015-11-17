@@ -1,7 +1,7 @@
 #ifndef _MBR_H_
 #define _MBR_H_
 
-static struct mbr_s mbr;
+extern struct mbr_s mbr;
 enum vol_type_e {VOL_STD,VOL_ANX,VOL_OTHER,VOL_UNUSED};
 #define MBR_MAGIC 0xDEADC0DE
 #define MAX_VOL 8
