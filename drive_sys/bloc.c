@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-static unsigned int current_vol;// Ou bien $CURRENT_VOLUME variable d'env du shell
+unsigned int current_vol;// Ou bien $CURRENT_VOLUME variable d'env du shell
 
 void init_super(unsigned int vol, char name, unsigned int serial){
 	//super;// 		= (struct super_s*) malloc(sizeof(struct super_s));

@@ -39,11 +39,11 @@ int delete_inode(unsigned int inumber) {
 	}
 	if(inode.two_indirect) {
 		read_blocn(current_vol, inumber, (unsigned char *)inode.two_indirect);
-		for(i = 0; i < NBPB; i++) {
-			unsigned int tmp[NBPB];
-			read_blocn(current_vol, inode.two_indirect, (unsigned char *)tmp);
-			free_blocs(tmp, NBPB);
-			free_bloc(inode.two_indirect);
+		for(i = 0; i < NB_BLOCS_BY_BLOC; i++) {
+			unsigned int tmp[NB_BLOCS_BY_BLOC];
+			read_blocn(current_volume, inode.blocs_double_indirect, (unsigned char *)tmp);
+			free_blocs(tmp, NB_BLOCS_BY_BLOC);
+			free_bloc(inode.blocs_double_indirect);
 		}
 		free_blocs(bloc, NB_BLOCS_BY_BLOC);
 	}

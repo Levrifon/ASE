@@ -18,7 +18,7 @@
 #define BLOC_SIZE       SECTOR_SIZE  
 #define DATA_BLOC_SIZE  BLOC_SIZE
 #define NDIRECT	10
-#define NBPB  2
+#define NBPB  NDIRECT+4
 /* different kind of files */
 enum file_type_e {FILE_FILE, FILE_DIRECTORY, FILE_SPECIAL};
 
