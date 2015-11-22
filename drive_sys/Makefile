@@ -1,7 +1,8 @@
 # $Id: Makefile,v 1.2 2004/10/12 09:06:17 marquet Exp $
 ##############################################################################
 
-ROOTDIR=/home/enseign/ASE
+#ROOTDIR=/home/enseign/ASE
+ROOTDIR=..
 
 CC	= gcc
 #CFLAGS	= -Wall -ansi -pedantic 
@@ -68,6 +69,6 @@ volume.o:volume.c
 ###------------------------------------------------------------
 .PHONY: clean realclean depend
 clean:
-	$(RM) *.o $(BINARIES)
+	$(RM) *.o $(BINARIES) *~
 realclean: clean 
 	$(RM) vdiskA.bin vdiskB.bin
