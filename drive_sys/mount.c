@@ -19,7 +19,8 @@
 #   include "mbr+sol.h"
 #   include "super+sol.h"
 #else
-#   error "Add your own include directives"
+#   include "mbr.h"
+#   include "bloc.h"
 #endif
 
 /* load super bloc of the $CURRENT_VOLUME

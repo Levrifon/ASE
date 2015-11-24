@@ -17,10 +17,11 @@
 #include "ifile.h"
 
 #ifdef SOL
-#   include "bloc+sol.h"
-#   include "volume+sol.h"
+#   include "super+sol.h"
+#   include "vol+sol.h"
 #else
-#   error "You need to put here your own .h includes."
+#   include "bloc.h"
+#   include "volume.h"
 #endif
 
 /* the file bloc number of a given character position in a file */  
@@ -31,7 +32,7 @@
 /*------------------------------
   Create and delete file
   ------------------------------------------------------------*/
-
+extern unsigned int current_vol;
 unsigned int 
 create_ifile(enum file_type_e type) 
 {

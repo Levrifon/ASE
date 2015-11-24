@@ -1,3 +1,6 @@
+#ifndef __BLOC_H__
+#define __BLOC_H__
+
 #define SUPER_MAGIC 0xDEADC0DE
 #define SUPER 0
 #define SUPER_NAME_MAX 32
@@ -31,3 +34,5 @@ unsigned int new_bloc(void);
 void free_bloc(unsigned int bloc);
 float used_percents(unsigned int vol);
 void display_infos(void);
+
+#endif
