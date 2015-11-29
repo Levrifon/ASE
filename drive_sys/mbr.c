@@ -11,7 +11,7 @@ int read_mbr(void) {
 	char buffer[HDA_SECTORSIZE];
 	read_sectorn(0,0,buffer,sizeof(struct mbr_s)); /* on lit au tout debut du secteur */
 	memcpy(&mbr,buffer,sizeof(struct mbr_s)); /*on copie le resultat dans le mbr */
-	printf("read_mbr : %d == %d\n", mbr.mbr_magic, MBR_MAGIC);
+	//printf("read_mbr : %d == %d\n", mbr.mbr_magic, MBR_MAGIC);
 	if(mbr.mbr_magic != MBR_MAGIC) {
 	        printf("init mbr\n");
 		mbr.mbr_magic = MBR_MAGIC;

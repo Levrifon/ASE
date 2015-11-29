@@ -13,5 +13,10 @@ dvol
 mkvol [nb blocs]
 dfs
 mknfs
+if_cfile
+if_dfile
+if_nfile
+if_pfile
 
-Jusqu'à maintenant dfs et mknfs ne marchent pas encore comme il faut.
+
+Sur nos machines personnelles, mkvol ne marche pas à cause d'un souci d'init_hardware, à voir sur les machines de la fac.

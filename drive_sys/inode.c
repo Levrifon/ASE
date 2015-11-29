@@ -1,16 +1,16 @@
 #include "inode.h"
 #include <assert.h>
 
-unsigned int current_vol;
+unsigned int current_volume;
 
 void read_inode (unsigned int inumber, struct inode_s* inode) {
 	assert(BLOC_SIZE == sizeof(struct inode_s));
-	read_bloc(current_vol, inumber, (unsigned char *)inode);
+	read_bloc(current_volume, inumber, (unsigned char *)inode);
 }
 
 void write_inode (unsigned int inumber, const struct inode_s *inode) {
 	assert(BLOC_SIZE == sizeof(struct inode_s));
-	write_bloc(current_vol, inumber, (unsigned char *)inode);
+	write_bloc(current_volume, inumber, (unsigned char *)inode);
 }
 
 void free_blocs(unsigned int *bloc, unsigned int n) {
@@ -46,15 +46,15 @@ int delete_inode(unsigned int inumber) {
 
 	if(inode.indirect) { /* si c'est différent de zéro = il existe */
 		unsigned int bloc[NBPB];
-		read_blocn(current_vol,inode.indirect,(unsigned char *)bloc,NBPB*sizeof(unsigned));
+		read_blocn(current_volume,inode.indirect,(unsigned char *)bloc,NBPB*sizeof(unsigned));
 		free_blocs(bloc,NBPB);
 		free_bloc(inode.indirect);
 	}
 	if(inode.two_indirect) {
-		read_blocn(current_vol, inumber, (unsigned char *)inode.two_indirect,NBPB*sizeof(unsigned));
+		read_blocn(current_volume, inumber, (unsigned char *)inode.two_indirect,NBPB*sizeof(unsigned));
 		for(i = 0; i < NBPB; i++) {
 			unsigned int tmp[NBPB];
-			read_blocn(current_vol, inode.two_indirect, (unsigned char *)tmp,NBPB*sizeof(unsigned));
+			read_blocn(current_volume, inode.two_indirect, (unsigned char *)tmp,NBPB*sizeof(unsigned));
 			free_blocs(tmp, NBPB);
 		}
 		free_bloc(inode.two_indirect);
@@ -66,6 +66,18 @@ int delete_inode(unsigned int inumber) {
 	return inumber;
 }
 
+unsigned initialize_bloc(unsigned address){
+	int new_bloc[NBPB];	
+	int i;
+	
+	read_bloc(current_volume, address, (unsigned char*)new_bloc);
+	for (i = 0; i < NBPB; i++){
+		new_bloc[i] = 0;
+	}
+	write_bloc(current_volume, address, (unsigned char*)new_bloc);
+	return address;
+}
+
 
 // Recopié depuis le cahier, les noms sont pas forcément les bons
 unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc,bool_t do_allocate){
@@ -74,7 +86,7 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc,bool_t do_a
 	read_inode(inumber, &inode);
 
 	//direct
-	if (bloc_index < NDIRECTS){
+	if (bloc_index < NDIRECT){
 		if (inode.direct[bloc_index] == 0){
 			if(do_allocate){
 				inode.direct[bloc_index] = initialize_bloc(new_bloc());
@@ -83,7 +95,7 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc,bool_t do_a
 		}
 		return inode.direct[bloc_index];
 	}
-	bloc_index -= NDIRECTS;
+	bloc_index -= NDIRECT;
 
 	//indirect simple
 	if (bloc_index < NBPB){
@@ -111,21 +123,21 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc,bool_t do_a
 	
 	//indirect double
 	if(bloc_index < NBPB*NBPB){
-		if (inode.blocs_double_indirect == 0){
+		if (inode.two_indirect == 0){
 			if(do_allocate){
-				inode.blocs_double_indirect = initialize_bloc(new_bloc());;
+				inode.two_indirect = initialize_bloc(new_bloc());;
 				write_inode(inumber,&inode);
 			}else{return BLOC_NULL;}
 		}	
 		int db_indirect_index = bloc_index / NBPB;
 		int indirect_index = bloc_index % NBPB; 				
 		int db_indirect[NBPB];
-		read_bloc(current_volume, inode.blocs_double_indirect, (unsigned char*)db_indirect);
+		read_bloc(current_volume, inode.two_indirect, (unsigned char*)db_indirect);
 		
 		if (db_indirect[db_indirect_index] == 0){
 			if(do_allocate){
 				db_indirect[db_indirect_index] = initialize_bloc(new_bloc());
-				write_bloc(current_volume, inode.blocs_double_indirect, (unsigned char*)db_indirect);
+				write_bloc(current_volume, inode.two_indirect, (unsigned char*)db_indirect);
 			}else{return BLOC_NULL;}
 		}
 		
@@ -142,6 +154,6 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc,bool_t do_a
 		return indirect[indirect_index]; 		
 	}
 	
-	fprintf(stderr,"fbloc is too big.\n\tfbloc provided: %d\n\tfbloc max size: %d",fbloc, NDIRECTS+NBPB+NBPB*NBPB);
+	//fprintf(stderr,"fbloc is too big.\n\tfbloc provided: %d\n\tfbloc max size: %d",fbloc, NDIRECT+NBPB+NBPB*NBPB);
 	return -1;
 }

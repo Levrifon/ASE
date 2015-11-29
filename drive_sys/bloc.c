@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-unsigned int current_vol;// Ou bien $CURRENT_VOLUME variable d'env du shell
+unsigned int current_volume;
 
 void init_super(unsigned int vol, char name, unsigned int serial){
 	//super;// 		= (struct super_s*) malloc(sizeof(struct super_s));
@@ -14,25 +14,25 @@ void init_super(unsigned int vol, char name, unsigned int serial){
 	strncpy(super.super_name, &name, SUPER_NAME_MAX);
 	super.super_serial = serial;
 	super.super_magic  = SUPER_MAGIC;
-	current_vol = vol; // A changer si on utiliser une variable d'env
+	current_volume = vol; // A changer si on utiliser une variable d'env
 
 	first_bloc.fb_size = super.super_n_free;
 	first_bloc.fb_next = SUPER;
 
 	save_super();
-	write_blocn(current_vol, 1, (unsigned char *)&first_bloc, sizeof(struct free_bloc_s));
+	write_blocn(current_volume, 1, (unsigned char *)&first_bloc, sizeof(struct free_bloc_s));
 }
 
 void save_super(void){
 	assert(super.super_magic == SUPER_MAGIC);
-	write_blocn(current_vol, SUPER, (unsigned char *) &super, sizeof(struct super_s));
+	write_blocn(current_volume, SUPER, (unsigned char *) &super, sizeof(struct super_s));
 }
 
 int load_super(unsigned int vol){
 	char buffer[BLOCSIZE];
 	read_blocn(vol, SUPER, (unsigned char *)&buffer, sizeof(struct super_s));
 	memcpy(&super, &buffer,sizeof(struct super_s));
-	current_vol = vol; // A changer si on utiliser une variable d'env
+	current_volume = vol; // A changer si on utiliser une variable d'env
 	if(super.super_magic == SUPER_MAGIC){
 		return 0;
 	}
@@ -43,7 +43,7 @@ int load_first_free(void){
 	if(super.super_n_free == 0){
 		return 0;
 	}
-	read_blocn(current_vol, super.super_first_free, (unsigned char *)&first_bloc, sizeof(first_bloc));
+	read_blocn(current_volume, super.super_first_free, (unsigned char *)&first_bloc, sizeof(first_bloc));
 	return 1;
 }
 
@@ -60,7 +60,7 @@ unsigned int new_bloc(void){
 	}else{
 		super.super_first_free++;
 		first_bloc.fb_size--;
-		write_blocn(current_vol, super.super_first_free, (unsigned char *)&first_bloc, sizeof(first_bloc));
+		write_blocn(current_volume, super.super_first_free, (unsigned char *)&first_bloc, sizeof(first_bloc));
 	}
 	save_super();
 	return res;
@@ -74,7 +74,7 @@ void free_bloc(unsigned int bloc){
 	bloc_s.fb_size = 1;
 	bloc_s.fb_next = super.super_first_free;
 	super.super_first_free = bloc;
-	write_blocn(current_vol, bloc, (unsigned char *)&bloc_s, sizeof(bloc_s));
+	write_blocn(current_volume, bloc, (unsigned char *)&bloc_s, sizeof(bloc_s));
 	first_bloc = bloc_s;
 	save_super();
 }
@@ -85,11 +85,11 @@ float used_percents(unsigned int vol){
 
 void display_infos(void){
 	printf("Nombre de blocs : %d\nNom\tSerial\tTaille\tUtilisé\tDispo.\tPourcentage\n%s\t%d\t%d\t%d\t%d\t%f\n",
-			mbr.mbr_vol[current_vol].vol_nblocs-1-super.super_n_free,
+			mbr.mbr_vol[current_volume].vol_nblocs-1-super.super_n_free,
 			super.super_name,
 			super.super_serial,
-			mbr.mbr_vol[current_vol].vol_nblocs-1,
-			mbr.mbr_vol[current_vol].vol_nblocs-1-super.super_n_free,
+			mbr.mbr_vol[current_volume].vol_nblocs-1,
+			mbr.mbr_vol[current_volume].vol_nblocs-1-super.super_n_free,
 			super.super_n_free,
-			used_percents(current_vol));
+			used_percents(current_volume));
 }
