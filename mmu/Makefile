@@ -23,7 +23,7 @@ all: $(BINARIES) $(OBJECTS)
 ### Binaries
 ###------------------------------------------------------------
 
-mi_kernel: mi_user.o mi_kernel.o
+mi_kernel: mi_user.o mi_kernel.o swap.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
 
 
@@ -34,6 +34,7 @@ mi_kernel: mi_user.o mi_kernel.o
 # you may fill these lines with "make depend"
 mi_user.o: mi_user.c mi_kernel.c mi_syscall.h
 mi_kernel.o: mi_kernel.c mi_user.c mi_syscall.h
+swap.o: swap.h
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< $(INCDIR)
 

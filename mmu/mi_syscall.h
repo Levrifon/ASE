@@ -13,18 +13,11 @@
 #define VM_PAGES 4096
 #define PM_SIZE PM_PAGES * PAGE_SIZE	
 #define VM_SIZE VM_PAGES * PAGE_SIZE
-#define N 254
+#define N 254 // 20 ?
 #define NB_PROCESS 2
 
 
-#define MMU_CMD 0x66
-#define MMU_FAULT_ADDR 0xCD
-#define MMU_IRQ		 13				
-			
-#define TLB_ADD_ENTRY	 0xCE								
-#define TLB_DEL_ENTRY	 0xDE			
-#define TLB_SIZE		32			
-#define TLB_ENTRIES		 0x800		
+	
 
 extern unsigned int current_process;
 

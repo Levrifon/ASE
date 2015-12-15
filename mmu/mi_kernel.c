@@ -2,10 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include "hw_config.h"
 #include "mi_syscall.h"
 #include "hardware.h"
+#include "swap.h"
 
 struct tlb_entry_s tlbe;
+struct vm_mapping_s vm_mapping[VM_PAGES];
+struct pm_mapping_s pm_mapping[PM_PAGES];
+unsigned int rr_page;
 unsigned int current_process;
 
 
@@ -31,21 +36,29 @@ static int vpage_of_vaddr(unsigned int vaddr){
 static int ppage_of_vaddr(int process, unsigned int vaddr){
         unsigned int vpage = vpage_of_vaddr(vaddr);
         unsigned int ppage;
-	if(vaddr > ((int)virtual_memory + VM_SIZE - 1)){
+	struct tlb_entry_s* tlb;
+        unsigned int entries = _in(TLB_ENTRIES);
+	if(vaddr < ((unsigned int)&virtual_memory) || vaddr > ((unsigned int)&virtual_memory + VM_SIZE - 1)){
 		return -1;
 	}
-	if((vpage<0 || vpage>N/NB_PROCESS)){
-		return -1;
+	int i;
+	if(vpage<N/NB_PROCESS){
+	        tlb = (struct tlb_entry_s*)(&entries);
+		for (i=0; i<TLB_SIZE; i++) {
+			if (tlb[i].tlb_vpage == vpage) {
+				return tlb[i].tlb_ppage;
+			}
+		}
 	}
 
-        ppage = vpage + 1 + (process* N/NB_PROCESS);
-        return ppage;
+        return -1;
 }
 // -----------------------------------------
 
 // Fonction handler
 // -----------------------------------------
-static void mmu_handler(void){
+//OLD VERSION
+/*static void mmu_handler(void){
 	int ppage, vaddr;
 
 	vaddr=_in(MMU_FAULT_ADDR);
@@ -60,6 +73,54 @@ static void mmu_handler(void){
 		tlbe.tlb_valid = 1;
 		_out(TLB_ADD_ENTRY,*((int *)&tlbe));
 	}
+}*/
+static void mmu_handler(void) {
+	int f_vaddr,f_vpage;
+	f_vaddr = _in(MMU_FAULT_ADDR);
+	f_vpage = vpage_of_vaddr(f_vaddr);
+	
+	tlbe.tlb_ppage = rr_page;
+	
+	
+	/* Si vpage deja allocated */
+	if (vm_mapping[f_vpage].vm_allocate) {
+		/* On change la tlb */
+                tlbe.tlb_vpage = f_vpage;        
+                tlbe.tlb_ppage = vm_mapping[f_vpage].vm_ppage;
+	        tlbe.tlb_valid=1;
+                _out(TLB_ADD_ENTRY, *(int*)&tlbe);
+	}else{
+	        /* Si rr_page dans pm_mapping deja allocated */
+	        if(pm_mapping[rr_page].pm_allocate) {
+	                /* On vide dans la swap */
+		        store_to_swap(pm_mapping[rr_page].pm_vpage,rr_page);
+		        pm_mapping[rr_page].pm_allocate = 0;
+		        vm_mapping[pm_mapping[rr_page].pm_vpage].vm_allocate=0;
+		        tlbe.tlb_ppage = rr_page;
+		        _out(TLB_DEL_ENTRY,*(int*)&tlbe);
+	        }
+	        if(fetch_from_swap(f_vpage,rr_page)==-1){
+	                //erreur
+	        }
+	        
+		/* on pointe sur la prochaine page qu'on peut mapper */
+		vm_mapping[f_vpage].vm_ppage = rr_page;
+		vm_mapping[f_vpage].vm_allocate = 1;
+		pm_mapping[rr_page].pm_vpage = f_vpage;
+		pm_mapping[rr_page].pm_allocate = 1;
+	        
+	        /* Maj TLB */
+	        tlbe.tlb_vpage = f_vpage;
+	        tlbe.tlb_ppage = rr_page;
+	        tlbe.tlb_acces = 7;
+	        tlbe.tlb_valid = 1;
+	        _out(TLB_ADD_ENTRY,*(int*)&tlbe);
+	        
+	        
+		/* Maj du round robin */
+		rr_page=(rr_page%(PM_PAGES-1))+1;
+        }
+	
 }
 // -----------------------------------------
 
