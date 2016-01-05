@@ -15,8 +15,8 @@ int current_vpage = -1;
 
 /* for mmu_handler2 */
 int rr_ppage = 1;
-struct pmapping_s pm_mapping[PM_PAGES];
-struct vmapping_s vm_mapping[VM_PAGES];
+struct pm_mapping_s pm_mapping[PM_PAGES];
+struct vm_mapping_s vm_mapping[VM_PAGES];
 
 extern void user_process();
 

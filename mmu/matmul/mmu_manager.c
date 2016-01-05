@@ -1,10 +1,10 @@
 #include "mmu_manager.h"
 
-
+/*
 static void mmu_handler1(void) {
   unsigned int vaddr = _in(MMU_FAULT_ADDR);
   unsigned int vpage = (vaddr >> 12) & 0xfff;
-  struct tlbe_s tlbe;
+  struct tlb_entry_s tlbe;
   int ppage = 1;
    
   if(current_vpage != -1) {
@@ -25,12 +25,12 @@ static void mmu_handler1(void) {
   
   return;
 }
-
+*/
 static void mmu_handler2(void) {
   unsigned int vaddr = _in(MMU_FAULT_ADDR);
   unsigned int vpage = (vaddr >> 12) & 0xfff;
   
-  if(vm_mapping[vpage].vm_allocated) { 
+  if(vm_mapping[vpage].vm_allocate) { 
     tlbe.tlb_vpage = vpage;	
     tlbe.tlb_ppage = vm_mapping[vpage].vm_ppage;
     tlbe.tlb_acces = 0x7;
@@ -40,13 +40,13 @@ static void mmu_handler2(void) {
 
   } else {
     
-    if(pm_mapping[rr_ppage].pm_allocated) {
+    if(pm_mapping[rr_ppage].pm_allocate) {
       store_to_swap(pm_mapping[rr_ppage].pm_vpage, rr_ppage);
       tlbe.tlb_ppage = rr_ppage;
       _out(TLB_DEL_ENTRY, *(int*) (&tlbe));
 
-      pm_mapping[rr_ppage].pm_allocated = 0;
-      vm_mapping[pm_mapping[rr_ppage].pm_vpage].vm_allocated = 0;
+      pm_mapping[rr_ppage].pm_allocate = 0;
+      vm_mapping[pm_mapping[rr_ppage].pm_vpage].vm_allocate = 0;
     
       if(fetch_from_swap(vpage, rr_ppage))
 	fprintf(stderr, "no information to fetch\n");
@@ -60,9 +60,9 @@ static void mmu_handler2(void) {
     _out(TLB_ADD_ENTRY, *(int*) (&tlbe)); 
 
     vm_mapping[vpage].vm_ppage = rr_ppage;
-    vm_mapping[vpage].vm_allocated = 1;
+    vm_mapping[vpage].vm_allocate = 1;
     pm_mapping[rr_ppage].pm_vpage = vpage;
-    pm_mapping[rr_ppage].pm_allocated = 1;
+    pm_mapping[rr_ppage].pm_allocate = 1;
   
     rr_ppage++;
     if(rr_ppage >= PM_PAGES)
@@ -71,20 +71,20 @@ static void mmu_handler2(void) {
   return;  
 }
 
-static void init_pm_map(struct pmapping_s pm_map[], int map_length) {
+static void init_pm_map(struct pm_mapping_s pm_map[], int map_length) {
   int i;
   
   for(i = 0; i < map_length; i++)
-    pm_map[i].pm_allocated = 0;
+    pm_map[i].pm_allocate = 0;
 
   return;
 }
 
-static void init_vm_map(struct vmapping_s vm_map[], int map_length) {
+static void init_vm_map(struct vm_mapping_s vm_map[], int map_length) {
   int i;
   
   for(i = 0; i < map_length; i++)
-    vm_map[i].vm_allocated = 0;
+    vm_map[i].vm_allocate = 0;
 
   return;
 }

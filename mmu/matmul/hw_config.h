@@ -29,6 +29,12 @@
 #define PAGE_SIZE 4096
 #define PM_SIZE (4096 * PM_PAGES)
 #define VM_SIZE (4096 * VM_PAGES)
-
+struct tlb_entry_s{
+        unsigned int tlb_name  :8;
+        unsigned int tlb_vpage :12;
+        unsigned int tlb_ppage :8;
+        unsigned int tlb_acces :3;
+        unsigned int tlb_valid :1;
+};
 #endif
 
