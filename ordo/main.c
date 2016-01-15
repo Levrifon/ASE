@@ -1,9 +1,12 @@
 #include "entete.h"
-
+#include "shell.h"
+/*
 void f_ping(void *arg);
 void f_pong(void *arg);
 void f_pang(void *arg);
-
+*/
+void shell(void *args);
+/*
 int main(int argc, char* argv[]) {
 	create_ctx(16384,f_ping,NULL);
 	create_ctx(16384,f_pong,NULL);
@@ -13,7 +16,11 @@ int main(int argc, char* argv[]) {
 	exit(EXIT_SUCCESS);
 }
 
-void f_ping(void *args) {
+*/
+int main(int argc,char* argv[]) {
+	create_ctx(16384,shell,NULL);
+}
+/*void f_ping(void *args) {
 	int i;
 	for(i=0; i<100; i++){
 		printf("A");
@@ -46,4 +53,4 @@ void f_pang(void *args) {
 		yield();
 	}
 	printf("\nfini pang\n");
-}
+}*/
